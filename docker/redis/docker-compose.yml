@@ -1,0 +1,27 @@
+# version: '3.8'
+services:
+  myredis:
+    image: redis
+    ports:
+      - '6379:6379'
+    volumes: 
+      - cache:/data
+    # command: ["redis-server", "--bind", "redis", "--port", "6379"]
+    # networks:
+    #   - app-network
+  rcli:
+    image: redis
+    links: 
+      - myredis
+    # networks:
+    #   - app-network
+    command: redis-cli -h redis
+
+
+volumes:
+  cache:
+    driver: local
+
+# networks:
+#   app-network:
+#     driver: bridge

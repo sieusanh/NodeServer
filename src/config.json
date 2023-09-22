@@ -1,0 +1,25 @@
+{
+    "PORT": 9000,
+    "CLIENT_UTC_OFFSET": 7,
+    "AN_HOUR_MILLISECS": 3600000,
+    "INDEX_PRODUCT": "products",
+    "ACCESS_TOKEN_SECRET": "secret@",
+    "POSTGRES": {
+        "HOST": "127.0.0.1",
+        "PORT": 5432,
+        "DATABASE": "postgres",
+        "USERNAME": "postgres",
+        "PASSWORD": "changeme"
+    },
+    "MONGO": {
+        "HOST": "127.0.0.1",
+        "PORT": 27017,
+        "DATABASE": "Shoping_Management",
+        "USERNAME": "sanh",
+        "PASSWORD": "changeme"
+    },
+    "REDIS": {
+        "HOST": "127.0.0.1",
+        "PORT": 6379
+    }
+}

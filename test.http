@@ -1,0 +1,22 @@
+
+# Test multiple order at the same time.
+POST http://localhost:9000/v1/api/user
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "amount": 50
+}
+
+###
+
+POST http://localhost:9000/v1/api/account/checkRedis
+
+POST http://localhost:3000/v1/api/transfer
+Content-Type: application/json
+
+{
+    "from": 1,
+    "to": 1,
+    "amount": 10
+}
