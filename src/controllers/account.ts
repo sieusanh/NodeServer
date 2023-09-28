@@ -46,8 +46,6 @@ async function register(req: Request, res: Response) {
         account.created_at = account.created_at
             || new Date().getTime();
         account.role = account.role || 'user';
-
-        // Insert new account
         await dbService.create(tableName, account);
 
         // Generate new access token
