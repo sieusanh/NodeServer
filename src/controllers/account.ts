@@ -12,8 +12,6 @@ async function register(req: Request, res: Response) {
     try {
         logger.info(`register`)
         const params = req.body;
-        // let newAccount: accountModel;
-        // newAccount = params;
 
         // Check if this account already existed
         const tableName = config?.TABLE?.ACCOUNT || 'accounts';
@@ -37,8 +35,6 @@ async function register(req: Request, res: Response) {
         }
 
         // Insert new account
-        // const account = { ...params };
-        // const account = accountModel(params);
         const account: accountModel = {
             name: '', age: 0, gender: '',
             phone: '', email: '', username: '',
@@ -65,7 +61,6 @@ async function register(req: Request, res: Response) {
         res.status(200).json({ token });
 
     } catch (err) {
-        console.log('Loi gi: ', err)
         logger.info(`register`);
         res.status(500).json(err);
     }
