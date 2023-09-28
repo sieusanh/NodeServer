@@ -13,7 +13,6 @@ class RedisService {
         this.client = createClient({ url });
         this.client.on('error', (err: Error) => {
             log.info('Redis error: ', err);
-            console.log('Redis err: ', err)
         })
     }
 }

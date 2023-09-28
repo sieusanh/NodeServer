@@ -7,7 +7,7 @@ import accountModel from '../models/account';
 import genToken from '../libs/jwt/generate';
 const logger = log.get('controller-account');
 
-// Common
+// Common controllers
 async function register(req: Request, res: Response) {
     try {
         logger.info(`register`)
@@ -102,7 +102,7 @@ async function login(req: Request, res: Response) {
     }
 }
 
-// User
+// User controllers
 function getCurrentInfo(req: Request, res: Response) {
     try {
         logger.info(`current-info`)
@@ -118,23 +118,7 @@ function getCurrentInfo(req: Request, res: Response) {
 }
 
 
-// Admin
-// async function checkMongo(req: Request, res: Response) {
-//     try {
-//         await mongoService.connect();
-//         console.log('okay')
-//         await mongoService.close();
-//         const timestamp = new Date().getTime();
-//         console.log('timestamp: ', timestamp);
-//         res.status(200).json({
-//             message: 'Success'
-//         });
-//     } catch (err) {
-//         console.log('Loi: ', err)
-//         res.status(500).json({ message: 'Loi roi' })
-//     }
-// }
-
+// Admin controllers
 async function count(req: Request, res: Response) {
     try {
         logger.info(`count`)
