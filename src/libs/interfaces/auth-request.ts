@@ -1,8 +1,8 @@
 import { Request } from 'express';
-import Account from '../../models/account';
+import AccessInfo from '../../models/access-info';
 
 interface AuthInfoRequest extends Request {
-    account: Account
+    info: AccessInfo
 }
 
 export default AuthInfoRequest;

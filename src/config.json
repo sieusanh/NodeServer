@@ -1,4 +1,5 @@
 {
+    "HOST": "127.0.0.1",
     "PORT": 9000,
     "CLIENT_UTC_OFFSET": 7,
     "AN_HOUR_MILLISECS": 3600000,
@@ -14,12 +15,19 @@
     "MONGO": {
         "HOST": "127.0.0.1",
         "PORT": 27017,
-        "DATABASE": "Shoping_Management",
-        "USERNAME": "sanh",
+        "DATABASE": "mongo",
+        "USERNAME": "mongo",
         "PASSWORD": "changeme"
     },
     "REDIS": {
         "HOST": "127.0.0.1",
         "PORT": 6379
+    },
+    "JWT": {
+        "PRIVATE_KEY": "zzz123zzz",
+        "EXPIRE_TIME": "2h"
+    },
+    "TABLE": {
+        "ACCOUNT": "accounts"
     }
 }

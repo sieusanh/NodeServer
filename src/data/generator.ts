@@ -1,21 +1,18 @@
 import axios from 'axios';
 import log from 'log';
-import pgService from '../database/postgres';
+import dbService from '../database/postgres';
 import mongoService from '../database/mongo';
-import table from './table';
+import tables from './table';
 import config from '../config.json';
-import { insertRow } from './insert';
 
 import Account from '../models/account';
 const logger = log.get('data-generator');
 
 async function createTable(queryString: string) {
     try {
-        const client = await pgService.connect();
-        const res = await client.query(queryString);
+        const res = await dbService.client.operator(queryString, []);
         console.log('RES: ', res)
         logger.info('Create table successfully.');
-        await client.release();
     } catch (err) {
         logger.info(JSON.stringify(err));
     }
@@ -43,8 +40,6 @@ async function populateAccountData() {
     const res = await axios.get(url);
     const accounts = res.data.users;
 
-    const client = await pgService.connect();
-
     const account: Account = {
         name: '',
         age: 0,
@@ -56,8 +51,8 @@ async function populateAccountData() {
         role: '',
         created_at: 0
     };
-    let queryString: string;
-    let promises: Promise<any>[] = [];
+    const promises: Promise<any>[] = [];
+    const tableName = config?.TABLE?.ACCOUNT || 'accounts';
 
     for (const e of accounts) {
         for (const field in account) {
@@ -68,35 +63,31 @@ async function populateAccountData() {
             } else {
                 account[field] = e[field]
             }
-
-            // account[field] = e[field];
         }
-        // account.name = e.firstName || '';
-        // account.role = account.role || 'user';
-
         account.created_at = new Date().getTime();
-        queryString = insertRow(account);
-        // const inserted_promise = operator(
-        // queryString, [], 'create');
-        const inserted_promise = client.query(
-            queryString, Object.values(account).map(e => e))
+        const insertedPromise = dbService.create(tableName, account)
             .then((res: any) => res)
             .catch((err: Error) => err);
-        promises.push(inserted_promise);
+
+        promises.push(insertedPromise);
     }
 
     await Promise.all(promises);
-    await client.release();
 }
 
 
 function generateData() {
 
+    const { accounts } = tables;
+
+    // Postgres
     // createTable(ob.alter_accounts);
-    // createTable(ob.accounts);
+    // createTable(accounts);
     // populateAccountData();
-    const mgDBname = config.MONGO.DATABASE;
-    const collectionName = 'orders';
+
+    // Mongodb
+    // const mgDBname = config.MONGO.DATABASE;
+    // const collectionName = 'orders';
     // createCollection(mgDBname, collectionName);
 }
 

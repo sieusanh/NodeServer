@@ -6,7 +6,7 @@ import AuthInfoRequest
 const adminAuthorization = (req: AuthInfoRequest,
     res: Response, next: NextFunction) => {
 
-    if (req.account.role !== 'Admin') {
+    if (req.info.role !== 'Admin') {
         res.status(403).json('Admin authorization failed.')
         return
     }

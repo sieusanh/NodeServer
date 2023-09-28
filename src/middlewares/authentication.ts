@@ -1,7 +1,7 @@
 'use strict'
 import jwt from 'jsonwebtoken';
-import { Response, NextFunction } from 'express';
-import { ACCESS_TOKEN_SECRET } from '../config.json';
+import { Request, Response, NextFunction } from 'express';
+import { JWT } from '../config.json';
 import AuthInfoRequest
     from '../libs/interfaces/auth-request';
 
@@ -22,7 +22,8 @@ const userAuthentication = async (req: AuthInfoRequest,
 
         // Verify access token
         const accessToken = splitted[1] || '';
-        jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (err,
+        const privateKey = JWT.PRIVATE_KEY;
+        jwt.verify(accessToken, privateKey, (err,
             decodedToken: jwt.JwtPayload) => {
 
             // Verify failed.
@@ -35,9 +36,11 @@ const userAuthentication = async (req: AuthInfoRequest,
             }
 
             // Verify passed.
-            const { email = '', name = '', role = '' } = decodedToken;
-            // req.account = { email, name, role };
-            next()
+            const { username = '', email = '',
+                name = '', role = '' } = decodedToken;
+            req.info = { username, email, name, role };
+
+            next();
         })
 
     } catch (err) {

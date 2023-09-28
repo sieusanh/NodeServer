@@ -1,23 +1,26 @@
 import { Request, Response } from 'express';
 import log from 'log';
 import redisClient from '../database/redis';
-// import { operator } from '../data/operator';
-import { countRecords, findRecords, deleteRecord } from '../data/query';
-import { insertRow } from '../data/insert';
-import pgService from '../database/postgres';
+import config from '../config.json';
+import dbService from '../database/postgres';
 import accountModel from '../models/account';
+import genToken from '../libs/jwt/generate';
 const logger = log.get('controller-account');
 
+// Common
 async function register(req: Request, res: Response) {
     try {
         logger.info(`register`)
-        const params = req.query;
+        const params = req.body;
         // let newAccount: accountModel;
         // newAccount = params;
 
         // Check if this account already existed
-        let queryString: string = countRecords(params);
-        const queryData = await pgService.operator(queryString, []);
+        const tableName = config?.TABLE?.ACCOUNT || 'accounts';
+        const queryData = await dbService.count(tableName, {
+            username: params?.username || '',
+            password: params?.password || ''
+        });
         const {
             rows: [
                 {
@@ -26,7 +29,6 @@ async function register(req: Request, res: Response) {
             ]
         } = queryData;
         const numAccount = parseInt(count_num) || 0;
-        console.log({ numAccount })
         if (numAccount > 0) {
             res.status(403).json({
                 message: 'Email or username already existed.'
@@ -49,18 +51,79 @@ async function register(req: Request, res: Response) {
             || new Date().getTime();
         account.role = account.role || 'user';
 
-        queryString = insertRow(account);
-        await pgService.operator(queryString, []);
+        // Insert new account
+        await dbService.create(tableName, account);
 
         // Generate new access token
+        const token = genToken({
+            email: account?.email || '',
+            name: account?.name || '',
+            username: account?.username || '',
+            role: account?.role || ''
+        });
+
+        res.status(200).json({ token });
 
     } catch (err) {
+        console.log('Loi gi: ', err)
         logger.info(`register`);
         res.status(500).json(err);
     }
 }
 
+async function login(req: Request, res: Response) {
+    try {
+        logger.info(`login`)
+        const params = req.body;
+
+        // Check if this account already existed
+        const tableName = config?.TABLE?.ACCOUNT || 'accounts';
+        const queryData = await dbService.find(tableName, {
+            username: params?.username || '',
+            password: params?.password || ''
+        });
+        const {
+            rows = []
+        } = queryData;
+
+        if (rows.length == 0) {
+            res.status(404).json({
+                message: 'Incorrect username or password.'
+            });
+            return;
+        }
+
+        const accountInfo = rows[0] || {};
+        const { email = '', username = '',
+            role = '' } = accountInfo;
+        // Generate new access token
+        const token = genToken({
+            email, username, role
+        });
+
+        res.status(200).json({ token });
+
+    } catch (err) {
+        logger.info(`login`);
+        res.status(500).json(err);
+    }
+}
+
 // User
+function getCurrentInfo(req: Request, res: Response) {
+    try {
+        logger.info(`current-info`)
+
+        // Current info
+        res.status(200).json({ message: 'User info' });
+        res.end();
+
+    } catch (err) {
+        logger.info(`current-info`);
+        res.status(500).json(err);
+    }
+}
+
 
 // Admin
 // async function checkMongo(req: Request, res: Response) {
@@ -83,9 +146,9 @@ async function count(req: Request, res: Response) {
     try {
         logger.info(`count`)
         const params = req.query;
-        let queryString: string = countRecords(params);
 
-        const queryData = await pgService.operator(queryString, []);
+        const tableName = config?.TABLE?.ACCOUNT || 'accounts';
+        const queryData = await dbService.count(tableName, params);
         const {
             rows: [
                 {
@@ -106,8 +169,8 @@ async function find(req: Request, res: Response) {
     try {
         logger.info(`find`)
         const params = req.query;
-        let queryString: string = findRecords(params);
-        const queryData = await pgService.operator(queryString, []);
+        const tableName = config?.TABLE?.ACCOUNT || 'accounts';
+        const queryData = await dbService.find(tableName, params);
         const {
             rowCount: total = 0,
             rows: data = []
@@ -122,13 +185,14 @@ async function find(req: Request, res: Response) {
     }
 }
 
+// delete 
 async function deleteOne(req: Request, res: Response) {
     try {
         logger.info(`find`)
         const id = req.params.id || '';
-        let queryString: string = deleteRecord(1);
-        const queryData = await pgService.operator(
-            queryString, [id]);
+        const tableName = config?.TABLE?.ACCOUNT || 'accounts';
+        const queryData = await dbService.delete(
+            tableName, { id });
         const { rowCount: total = 0 } = queryData;
         if (total != 1) {
             // throw Error('Not found record');
@@ -142,6 +206,7 @@ async function deleteOne(req: Request, res: Response) {
     }
 }
 
+// post
 async function checkRedis(req: Request, res: Response) {
     try {
 
@@ -202,7 +267,6 @@ async function checkRedis(req: Request, res: Response) {
         // const value = await redisClient.get('prop2');
         // console.log({ value })
 
-        // 17'
         // autocannon -a 40 -c 20 -d 10 -m POST http://localhost:9000/order/commit
 
         res.status(200).json({
@@ -218,5 +282,6 @@ async function checkRedis(req: Request, res: Response) {
 
 
 export default {
-    register, count, find, deleteOne, checkRedis
+    register, login, count, find,
+    deleteOne, checkRedis, getCurrentInfo
 };
