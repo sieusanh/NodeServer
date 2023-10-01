@@ -22,3 +22,5 @@ function routeCompression() {
 }
 
 export default routeCompression;
+
+// autocannon - a 40 - c 20 - d 10 - m POST http://localhost:9000/v1/api/compression  
