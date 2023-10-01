@@ -36,14 +36,14 @@ Average 4444 Req/Sec, Average 1.11 MB Bytes/Sec
 
 ## Populating 10 million documents in MongoDB within 3 minutes  
 Collection userLog:   
-{  
-    userId: number,  
-    userGender: string,  
-    loginAt: number,  
-    logoutAt: number,  
-    activities: {  
-        getCount: number,  
-        postCount: number  
+{
+    "userId": "number",  
+    "userGender": "string",  
+    "loginAt": "number",  
+    "logoutAt": "number",  
+    "activities": {  
+        "getCount": "number",  
+        "postCount": "number"  
     }  
 }  
   
