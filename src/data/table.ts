@@ -9,15 +9,15 @@ const accounts = `CREATE TABLE accounts (
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(50) NOT NULL,
     role VARCHAR(50),
-    created_at NUMERIC(15) NOT NULL
+    createdAt NUMERIC(15) NOT NULL
 )`;
 // created_at TIMESTAMP NOT NULL
 
 const account_logs = `CREATE TABLE account_logs (
     id serial PRIMARY KEY,
-    user_id INT NOT NULL,
-    login_at TIMESTAMP NOT NULL,
-    logout_at TIMESTAMP,
+    userId INT NOT NULL,
+    loginAt TIMESTAMP NOT NULL,
+    logoutAt TIMESTAMP,
     activities VARCHAR[],
     FOREIGN KEY (user_id) REFERENCES accounts (id)
 )`;
@@ -36,9 +36,9 @@ const products = `CREATE TABLE products (
 
 const orders = `CREATE TABLE orders (
     id serial PRIMARY KEY,
-    total_price NUMERIC(10, 2),
-    user_id INT NOT NULL,
-    product_ids INT[],
+    totalPrice NUMERIC(10, 2),
+    userId INT NOT NULL,
+    productIds INT[],
     FOREIGN KEY (EACH ELEMENT OF product_ids) REFERENCES products (id),
     FOREIGN KEY (user_id) REFERENCE accounts (id)
 )`;

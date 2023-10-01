@@ -1,32 +1,31 @@
 import axios from 'axios';
 import log from 'log';
-import dbService from '../database/postgres';
-import mongoService from '../database/mongo';
+import pgService from '../database/postgres';
+import mgService from '../database/mongo';
 import tables from './table';
 import config from '../config.json';
 
 import Account from '../models/account';
+import UserLog from '../models/user-log';
 const logger = log.get('data-generator');
 
 async function createTable(queryString: string) {
     try {
-        const res = await dbService.client.operator(queryString, []);
-        console.log('RES: ', res)
+        await pgService.client.operator(queryString, []);
         logger.info('Create table successfully.');
     } catch (err) {
         logger.info(JSON.stringify(err));
     }
 }
 
-async function createCollection(dbName: string, collectionName: string) {
+async function createCollection(
+    dbName: string, collectionName: string) {
     try {
-        await mongoService.connect();
-        const db = mongoService.client.db(dbName);
+        const db = mgService.client.db(dbName);
         await db.createCollection(collectionName);
-        await mongoService.close();
-        console.log('created collection ', collectionName)
+        console.log('A new collection created.')
     } catch (err) {
-        console.log('Loi ne: ', err)
+        console.log('Loi gi v: ', err)
         logger.info(JSON.stringify(err));
     }
 }
@@ -49,7 +48,7 @@ async function populateAccountData() {
         username: '',
         password: '',
         role: '',
-        created_at: 0
+        createdAt: 0
     };
     const promises: Promise<any>[] = [];
     const tableName = config?.TABLE?.ACCOUNT || 'accounts';
@@ -64,8 +63,8 @@ async function populateAccountData() {
                 account[field] = e[field]
             }
         }
-        account.created_at = new Date().getTime();
-        const insertedPromise = dbService.create(tableName, account)
+        account.createdAt = new Date().getTime();
+        const insertedPromise = pgService.create(tableName, account)
             .then((res: any) => res)
             .catch((err: Error) => err);
 
@@ -75,6 +74,71 @@ async function populateAccountData() {
     await Promise.all(promises);
 }
 
+// Utilities
+function getRandomInt(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+async function populateLogData() {
+
+    try {
+        const promises: Promise<any>[] = [];
+        const table = config?.TABLE?.USER_LOG || 'userLog';
+
+        const loopLimit = 1000;
+        const fromTime = new Date('2022-01-01T00:00:00.000Z')
+            .getTime();
+        const toTime = new Date('2023-01-01T00:00:00.000Z')
+            .getTime();
+        let randomLog = {};
+        let userId: number;
+        let userGender: string;
+        let loginAt: number;
+        let logoutAt: number;
+        let activities: Object;
+        let documentBatch: Object[];
+        const logCollection = mgService.database.collection(table);
+
+        console.time('timer')
+        for (let l = 1; l <= 10; l++) {
+            for (let i = 1; i <= loopLimit; i++) {
+                documentBatch = [];
+                for (let j = 1; j <= loopLimit; j++) {
+                    // Generate random values
+                    userId = getRandomInt(1, 1000);
+                    userGender = (userId % 2) ? 'Male' : 'Female';
+                    // 01/01/2022 - 01/01/2023
+                    loginAt = getRandomInt(fromTime, toTime);
+                    logoutAt = loginAt + 2 * 60 * 60 * 1000; // +2h
+                    activities = {
+                        getCount: getRandomInt(1, 50),
+                        postCount: getRandomInt(1, 50)
+                    };
+                    randomLog = {
+                        userId, userGender,
+                        loginAt, logoutAt, activities
+                    };
+                    documentBatch.push(randomLog);
+                }
+
+                const insertedPromise = logCollection
+                    .insertMany(documentBatch)
+                    .then((res: any) => res)
+                    .catch((err: Error) => err);
+
+                promises.push(insertedPromise);
+            }
+
+            await Promise.all(promises);
+        }
+        console.timeEnd('timer')
+
+    } catch (err) {
+        console.log('Loi roi: ', err)
+    }
+}
 
 function generateData() {
 
@@ -86,9 +150,12 @@ function generateData() {
     // populateAccountData();
 
     // Mongodb
-    // const mgDBname = config.MONGO.DATABASE;
-    // const collectionName = 'orders';
-    // createCollection(mgDBname, collectionName);
+    // const mgDatabase = config.MONGO.DATABASE;
+    // const table = config.TABLE.USER_LOG;
+    // createCollection(mgDatabase, table);
+
+
+    // populateLogData();
 }
 
 export default generateData;

@@ -1,0 +1,11 @@
+search keyword: docker compose MongoServerError: Authentication failed
+
+Command:
+docker exec -it container_name /bin/sh
+docker exec -it container-name bash
+
+
+
+https://www.mongodb.com/community/forums/t/mongo-command-not-found-with-v6-0-ce/179682
+
+https://stackoverflow.com/questions/60394290/mongo-db-docker-image-authentication-failed

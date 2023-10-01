@@ -28,6 +28,8 @@
         "EXPIRE_TIME": "2h"
     },
     "TABLE": {
-        "ACCOUNT": "accounts"
-    }
+        "ACCOUNT": "accounts",
+        "USER_LOG": "userLog"
+    },
+    "UV_THREADPOOL_SIZE": 1
 }

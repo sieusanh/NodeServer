@@ -1,4 +1,4 @@
-// Define type User info
+
 type Account = {
     name: string,
     age: number,
@@ -8,7 +8,7 @@ type Account = {
     username: string,
     password: string,
     role: string,
-    created_at: number
+    createdAt: number
 };
 
 export default Account;

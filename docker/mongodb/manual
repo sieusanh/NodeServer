@@ -1,0 +1,6 @@
+docker run -it -p 28000:27017 --name mongoContainer mongo:latest mongo
+
+docker exec -it mongoContainer mongosh
+
+
+docker exec -it mongo6-jammy mongosh -u admin -p VRuAd2Nvmp4ELHh5 --authenticationDatabase admin
