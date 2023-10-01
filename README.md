@@ -37,14 +37,14 @@ Average 4444 Req/Sec, Average 1.11 MB Bytes/Sec
 ## Populating 10 million documents in MongoDB within 3 minutes  
 Collection userLog:   
 {
-    "userId": "number",  
-    "userGender": "string",  
-    "loginAt": "number",  
-    "logoutAt": "number",  
-    "activities": {  
-        "getCount": "number",  
-        "postCount": "number"  
-    }  
+&nbsp;&nbsp;&nbsp;&nbsp;"userId": "number",  
+&nbsp;&nbsp;&nbsp;&nbsp;"userGender": "string",  
+&nbsp;&nbsp;&nbsp;&nbsp;"loginAt": "number",  
+&nbsp;&nbsp;&nbsp;&nbsp;"logoutAt": "number",  
+&nbsp;&nbsp;&nbsp;&nbsp;"activities":&nbsp;&nbsp;&nbsp;&nbsp;{  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"getCount": "number",  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"postCount": "number"  
+&nbsp;&nbsp;&nbsp;&nbsp;}  
 }  
   
 ## Decreasing response time from 6970ms to 57ms using Redis cache  
