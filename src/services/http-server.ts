@@ -14,8 +14,8 @@ let server;
 function shutDown() {
     server.close(() => {
         // pgService.close();
-        redisClient.disconnect();
-        mgService.close();
+        // redisClient.disconnect();
+        // mgService.close();
 
         log.info('Closed out remaining connections');
     });
@@ -23,8 +23,8 @@ function shutDown() {
 
 async function startServer() {
     // await pgService.connect();
-    await redisClient.connect();
-    await mgService.connect();
+    // await redisClient.connect();
+    // await mgService.connect();
 
     const { json } = express;
     server = app.listen(PORT, () => {

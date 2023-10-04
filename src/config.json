@@ -31,5 +31,8 @@
         "ACCOUNT": "accounts",
         "USER_LOG": "userLog"
     },
-    "UV_THREADPOOL_SIZE": 1
+    "SMTP_CREDENTIALS": {
+        "USERNAME": "4c6369295bfed5",
+        "PASSWORD": "9240869e26ce05"
+    }
 }
