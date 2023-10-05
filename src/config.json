@@ -34,5 +34,9 @@
     "SMTP_CREDENTIALS": {
         "USERNAME": "4c6369295bfed5",
         "PASSWORD": "9240869e26ce05"
+    },
+    "OAuth": {
+        "CLIENT_ID": "180805159122-ne7kg5efeut0melne132ee8gterjl138",
+        "CLIENT_SECRET": "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"
     }
 }

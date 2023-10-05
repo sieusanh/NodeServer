@@ -1,103 +1,52 @@
-// import firebaseAdmin from 'firebase-admin';
-// import functions from 'firebase-functions';
+
 import nodemailer from 'nodemailer';
-// import serviceAccountCredentials
-// from '../data/firebase-private-key/serviceAccountKey.json';
+import { OAuth2Client } from 'google-auth-library';
 import config from '../config.json';
 
-function PushNotifier(receivingEmails: string) {
-    // // Setting up Firebase
-    // const serviceAccount = serviceAccountCredentials as
-    //     firebaseAdmin.ServiceAccount;
-    // const defaultAppConfig = {
-    //     credential: firebaseAdmin.credential.cert(serviceAccount),
-    //     // config.FIREBASE.serviceAccountKey),
-    //     // databaseURL: 'https://node-xxxxx.com'
-    // };
 
-    // Initializing Firebase Admin SDK
-    // firebaseAdmin.initializeApp(defaultAppConfig);
+async function PushNotifier(receivingEmails: string) {
+    const GOOGLE_MAILER_CLIENT_ID = '164901748839-oqm5fqf542crlprim7crctr0a287emiq';//'.apps.googleusercontent.com';
+    // const GOOGLE_MAILER_CLIENT_ID = '164901748839-oqm5fqf542crlprim7crctr0a287emiq';
+    const GOOGLE_MAILER_CLIENT_SECRET = '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';
+    const GOOGLE_MAILER_REFRESH_TOKEN = '1//04v_0xgdH-9JkCgYIARAAGAQSNwF-L9Ir1Z5hOpMO84ioNigFtZOGrYQvs4vTH5jj3VT0iAe0g_yQM60k9MbbcxiWpWv7Je-wi4k';
+    const ADMIN_EMAIL_ADDRESS = 'tetconchuot3101@gmail.com';
 
+    const myOAuth2Client = new OAuth2Client(
+        GOOGLE_MAILER_CLIENT_ID,
+        GOOGLE_MAILER_CLIENT_SECRET
+    );
+
+    myOAuth2Client.setCredentials({
+        refresh_token: GOOGLE_MAILER_REFRESH_TOKEN
+    });
+
+    const myAccessTokenObject = await myOAuth2Client.getAccessToken();
+    const myAccessToken = myAccessTokenObject?.token;
 
     // Setting up Nodemailer
     const transporter = nodemailer.createTransport({
-        // host: 'smtp.mailtrap.io',
-        host: 'smtp.gmail.com',
-        port: 2525,
+        service: 'gmail',
         auth: {
-            // user: config.SMTP_CREDENTIALS.USERNAME,
-            // pass: config.SMTP_CREDENTIALS.PASSWORD
-            user: 'tetconchuot3101@gmail.com',
-            pass: 'insideout'
+            type: 'OAuth2',
+            user: ADMIN_EMAIL_ADDRESS,
+            clientId: GOOGLE_MAILER_CLIENT_ID,
+            clientSecret: GOOGLE_MAILER_CLIENT_SECRET,
+            refreshToken: GOOGLE_MAILER_REFRESH_TOKEN,
+            accessToken: myAccessToken
         }
     });
 
     const mailOptions = {
-        from: 'Nodemailer sender',
+        // from: 'gmail sender',
         to: receivingEmails,
         subject: 'Email sent via Firebase',
         text: 'Hello world!',
         html: '<b>Sending emails with Firebase is easy!</b>'
     };
 
-    transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-            console.log('Loi sen: ', err)
-        } else {
-            console.log('info sen: ', info)
-        }
-    });
+    const senderPromise = transporter.sendMail(mailOptions);
 
-    // return senderPromise;
-
-    // const emailSender = functions.https.onRequest((req, res) => {
-    //     const to = 'abc@gmail.com'; //req.query.dest
-    //     const mailOptions = {
-    //         from: 'sieusanh00@gmail.com',
-    //         to: to,
-    //         subject: 'Email sent via Firebase',
-    //         html: '<b>Sending emails with Firebase is easy!</b>'
-    //     }
-    //     transporter.sendMail(mailOptions, (err, info) => {
-    //         if (err) {
-    //             return res.send(err.toString());
-    //         }
-    //         return res.send('Email sent successfully');
-    //     });
-    // });
-
-    // return emailSender;
+    return senderPromise;
 }
 
 export default PushNotifier;
-
-// PushNotifier.prototype.sendToIOS = function (data) {
-//     const ios = {
-//         headers: {
-//             'apns-priority': '10',
-//             'apns-expiration': '360000'
-//         },
-//         payload: {
-//             aps: {
-//                 alert: {
-//                     title: 'title push'
-//                 },
-//                 badge: 1,
-//                 sound: 'default',
-//             }
-//         }
-//     };
-
-//     const message = {
-//         apns: ios,
-//         token: token
-//     };
-
-//     firebaseAdmin.messaging().send(message)
-//         .then((response) => {
-//             // response is a message ID string
-//         })
-//         .catch((error) => {
-//             console.log('Loi firebase send: ', error)
-//         });
-// }

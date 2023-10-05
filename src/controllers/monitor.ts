@@ -6,19 +6,16 @@ import PushNotifier from '../services/push-notification';
 const logger = log.get('controller-monitor');
 
 // Admin controllers
-function pushNotify(req: Request, res: Response) {
+async function pushNotify(req: Request, res: Response) {
     try {
         logger.info(`count`)
-        console.log('ENTERR')
         const emails = req.query.emails as string;
-        console.log({ emails })
 
-        const sendResult = PushNotifier(emails);
+        const sendResult = await PushNotifier(emails);
         console.log('sendd: ', sendResult)
 
         res.status(200).json({ message: 'Send notify successfully.' });
     } catch (err) {
-        console.log('Loi gi roi: ', err)
         logger.info(`count`);
         res.status(500).json(err);
     }
