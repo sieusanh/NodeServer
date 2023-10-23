@@ -13,7 +13,7 @@ let server;
 
 function shutDown() {
     server.close(() => {
-        // pgService.close();
+        pgService.close();
         // redisClient.disconnect();
         // mgService.close();
 
@@ -22,7 +22,7 @@ function shutDown() {
 }
 
 async function startServer() {
-    // await pgService.connect();
+    await pgService.connect();
     // await redisClient.connect();
     // await mgService.connect();
 
