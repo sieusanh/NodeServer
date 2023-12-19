@@ -1,4 +1,5 @@
-# NodeServer (Continuous updating)  
+# NodeServer
+
  This repository focus on system performance optimization techniques: Caching, Data query tuning, Database indexing and partitioning,   Handle high concurrent request number.  
   
 Physics: 4 Cores CPU, 16GB RAM  
